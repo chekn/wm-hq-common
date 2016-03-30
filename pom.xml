@@ -27,19 +27,14 @@
 			<version>0.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.yicai.medialab</groupId>
-			<artifactId>writingmaster-drupal-hsclient</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>2.3.23</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.6.3</version>
 		</dependency>
 		
 	</dependencies>
