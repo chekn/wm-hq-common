@@ -4,14 +4,15 @@ import java.util.Date;
 import java.util.Map;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.UpdateResult;
 
 /**
  * 
@@ -20,35 +21,49 @@ import com.mongodb.client.model.Filters;
  */
 public class PickLastoneRcdTool {
 	
-	public static String queryLastParsedDataCompareStr(String uniqueName) throws JsonProcessingException {
-		MongoClient mongoClient=MongoDBTool.getMongoClient();
-		ObjectMapper mapper=new ObjectMapper();
-		String jsonStr="";
+	public static Map<String,Object> queryLastRunData(MongoClient mongoClient, String uniqueName) throws JsonProcessingException {
+		Document revDoc=new Document();
 		
-		MongoDatabase db=mongoClient.getDatabase("writingmaster_test");
-		
-		MongoCollection<Document> coll=db.getCollection("parsed_data");
-		
-		FindIterable<Document> fi= coll.find(Filters.eq("collection", uniqueName)).sort(new Document("parse_time",-1)).limit(1);
+		MongoDatabase db=mongoClient.getDatabase("hq_jar");
+		MongoCollection<Document> coll=db.getCollection("hq_run_data");
+		FindIterable<Document> fi= coll.find(Filters.eq("uniqueName", uniqueName)).sort(new Document("date",-1)).limit(1);
 		for(Document doc:fi)
-			jsonStr=mapper.writeValueAsString(((Document)((Document)doc.get("parsed_data")).get(uniqueName)).get("comparableStr"));
+			revDoc=doc;
 		
-		mongoClient.close();
-		return jsonStr;
+		return revDoc;
 	}
 	
-	public static void insertHaveGernParsedData(String uniqueName,Map<String,Object> parsedData){
+	/**
+	 * 插入数据,放回ObjectId  state: 0 启动状态  1 运行结束状态
+	 * @param mongoClient
+	 * @param uniqueName
+	 * @param parsedData
+	 */
+	public static String insertRunData(MongoClient mongoClient, String uniqueName,Map<String,Object> parsedData){
 		Document doc=new Document();
-		doc.append("collection", uniqueName);
-		doc.append("parse_time", new Date());
-		doc.append("parsed_data", parsedData);
+		doc.append("uniqueName", uniqueName);
+		doc.append("state", 0);
+		doc.append("startDate", new Date());
 		
-		MongoClient mongoClient=MongoDBTool.getMongoClient();
-		MongoDatabase db=mongoClient.getDatabase("writingmaster_test");
-		MongoCollection<Document> coll=db.getCollection("parsed_data");
+		MongoDatabase db=mongoClient.getDatabase("hq_jar");
+		MongoCollection<Document> coll=db.getCollection("hq_run_data");
 		coll.insertOne(doc);
 		
-		mongoClient.close();
+		return null;
 	}
+	
+	public static void updateRunData(MongoClient mongoClient, String id,String comparableStr){
+		Document updatePartDoc=new Document();
+		updatePartDoc.append("state", 1);
+		updatePartDoc.append("comparableStr",comparableStr);
+		updatePartDoc.append("endDate", new Date());
+		
+		MongoDatabase db=mongoClient.getDatabase("hq_jar");
+		MongoCollection<Document> coll=db.getCollection("hq_run_data");
+		UpdateResult updateResult= coll.updateOne(Filters.eq("_id", new ObjectId(id)), new Document("$set", updatePartDoc));
+		
+		updateResult.getModifiedCount();
+	}
+	
 	
 }
