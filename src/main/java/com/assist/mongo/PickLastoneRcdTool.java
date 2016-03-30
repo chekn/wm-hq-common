@@ -39,7 +39,7 @@ public class PickLastoneRcdTool {
 	 * @param uniqueName
 	 * @param parsedData
 	 */
-	public static String insertRunData(MongoClient mongoClient, String uniqueName,Map<String,Object> parsedData){
+	public static String insertRunData(MongoClient mongoClient, String uniqueName){
 		Document doc=new Document();
 		doc.append("uniqueName", uniqueName);
 		doc.append("state", 0);
@@ -49,7 +49,7 @@ public class PickLastoneRcdTool {
 		MongoCollection<Document> coll=db.getCollection("hq_run_data");
 		coll.insertOne(doc);
 		
-		return null;
+		return doc.get("_id").toString();
 	}
 	
 	public static void updateRunData(MongoClient mongoClient, String id,String comparableStr){
