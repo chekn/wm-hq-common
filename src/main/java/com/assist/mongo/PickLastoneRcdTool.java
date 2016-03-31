@@ -26,7 +26,7 @@ public class PickLastoneRcdTool {
 		
 		MongoDatabase db=mongoClient.getDatabase("hq_jar");
 		MongoCollection<Document> coll=db.getCollection("hq_run_data");
-		FindIterable<Document> fi= coll.find(Filters.eq("uniqueName", uniqueName)).sort(new Document("date",-1)).limit(1);
+		FindIterable<Document> fi= coll.find(Filters.eq("uniqueName", uniqueName)).sort(new Document("startDate",-1)).limit(1);
 		for(Document doc:fi)
 			revDoc=doc;
 		
