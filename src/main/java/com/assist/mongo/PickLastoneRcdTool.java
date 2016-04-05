@@ -22,16 +22,38 @@ import com.mongodb.client.result.UpdateResult;
  */
 public class PickLastoneRcdTool {
 	
-	public static Map<String,Object> queryLastRunData(MongoClient mongoClient, String mongoDbName, String uniqueName) throws JsonProcessingException {
+	private static String collName="hq_run_data";
+	
+	public static Map<String,Object> queryLastRunData(MongoClient mongoClient, String mongoDbName, String uniqueName) {
 		Document revDoc=new Document();
 		
 		MongoDatabase db=mongoClient.getDatabase(mongoDbName);
-		MongoCollection<Document> coll=db.getCollection("hq_run_data");
+		MongoCollection<Document> coll=db.getCollection(collName);
 		FindIterable<Document> fi= coll.find(Filters.eq("uniqueName", uniqueName)).sort(new Document("startDate",-1)).limit(1);
 		for(Document doc:fi)
 			revDoc=doc;
 		
 		return revDoc;
+	}
+	
+	/**
+	 * 
+	 * @param mongoClient
+	 * @param mongoDbName
+	 * @param comparableStr
+	 * @param uniqueName
+	 * @return
+	 */
+	@Deprecated
+	public static long queryComaprableStr(MongoClient mongoClient, String mongoDbName, String comparableStr, String uniqueName){
+		
+		Document cass=new Document();
+		cass.append("uniqueName", uniqueName);
+		cass.append("comparableStr", comparableStr);
+		MongoDatabase db=mongoClient.getDatabase(mongoDbName);
+		MongoCollection<Document> coll=db.getCollection(collName);
+		
+		return coll.count(cass);
 	}
 	
 	/**
@@ -77,6 +99,5 @@ public class PickLastoneRcdTool {
 		
 		updateResult.getModifiedCount();
 	}
-	
 	
 }
