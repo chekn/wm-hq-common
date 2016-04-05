@@ -7,7 +7,6 @@ import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -57,16 +56,12 @@ public class PickLastoneRcdTool {
 	}
 	
 	/**
-	 * 插入数据,放回ObjectId  state: 0 启动状态  1 运行结束状态
+	 * 插入数据,放回ObjectId  state: 0 运行状态  1 没获取到有效数据 2 获取到有效数据 
 	 * @param mongoClient
 	 * @param uniqueName
 	 * @param parsedData
 	 */
-	
-    
-
-	public static String insertRunData(MongoClient mongoClient, String mongoDbName, String uniqueName){
-
+	public static Map<String,Object> insertRunData(MongoClient mongoClient, String mongoDbName, String uniqueName){
 		Document doc=new Document();
 		doc.append("uniqueName", uniqueName);
 		doc.append("state", 0);
@@ -76,25 +71,24 @@ public class PickLastoneRcdTool {
 		MongoCollection<Document> coll=db.getCollection("hq_run_data");
 		coll.insertOne(doc);
 		
-		return doc.get("_id").toString();
+		return doc;
 	}
 	
-	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id,String comparableStr){
+	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr){
 		Map<String,Object>filterMap= new HashMap<String,Object>();
 		filterMap.put("noFilter","NA");
-		updateRunData(mongoClient,mongoDbName,id,comparableStr,filterMap);
+		updateRunData(mongoClient,mongoDbName,id, state, comparableStr,filterMap);
 	}
 	
-	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id,String comparableStr,Map<String,Object> filterMap){
+	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr,Map<String,Object> filterMap){
 		Document updatePartDoc=new Document();
-		updatePartDoc.append("state", 1);
+		updatePartDoc.append("state", state);
 		updatePartDoc.append("comparableStr",comparableStr);
 		updatePartDoc.append("endDate", new Date());
 	    if(!filterMap.containsKey("noFilter"))updatePartDoc.append("filterMap",filterMap);
 		
 		MongoDatabase db=mongoClient.getDatabase(mongoDbName);
-		MongoCollection<Document> coll=db.getCollection("hq_run_data");
-		System.out.println("******"+id);
+		MongoCollection<Document> coll=db.getCollection(collName);
 		UpdateResult updateResult= coll.updateOne(Filters.eq("_id", new ObjectId(id)), new Document("$set", updatePartDoc));
 		
 		updateResult.getModifiedCount();
