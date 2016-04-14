@@ -80,7 +80,7 @@ public class PickLastoneRcdTool {
 		updateRunData(mongoClient,mongoDbName,id, state, comparableStr,filterMap);
 	}
 	
-	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr,Map<String,Object> filterMap){
+	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr,Map<String,?> filterMap){
 		Document updatePartDoc=new Document();
 		updatePartDoc.append("state", state);
 		updatePartDoc.append("comparableStr",comparableStr);
