@@ -75,18 +75,20 @@ public class PickLastoneRcdTool {
 	}
 	
 	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr){
-		Map<String,Object>filterMap= new HashMap<String,Object>();
-		filterMap.put("noFilter","NA");
-		updateRunData(mongoClient,mongoDbName,id, state, comparableStr,filterMap);
+		updateRunData(mongoClient,mongoDbName,id, state, comparableStr,null);
 	}
 	
-	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr,Map<String,?> filterMap){
+	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr, Map<String, ?> extKeys){
 		Document updatePartDoc=new Document();
 		updatePartDoc.append("state", state);
 		updatePartDoc.append("comparableStr",comparableStr);
 		updatePartDoc.append("endDate", new Date());
-	    if(!filterMap.containsKey("noFilter"))updatePartDoc.append("filterMap",filterMap);
-		
+	    if(extKeys!=null) {
+	    	//添加自定义列
+	    	for(String key:extKeys.keySet())
+	    		updatePartDoc.append(key,extKeys.get(key));
+	    }
+	    	
 		MongoDatabase db=mongoClient.getDatabase(mongoDbName);
 		MongoCollection<Document> coll=db.getCollection(collName);
 		UpdateResult updateResult= coll.updateOne(Filters.eq("_id", new ObjectId(id)), new Document("$set", updatePartDoc));
