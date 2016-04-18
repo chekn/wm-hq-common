@@ -36,14 +36,46 @@ public class PickLastoneRcdTool {
 	}
 	
 	/**
-	 * 
+	 * 插入数据,放回ObjectId  state: 0 运行状态  1 没获取到有效数据 2 获取到有效数据 
 	 * @param mongoClient
-	 * @param mongoDbName
-	 * @param comparableStr
 	 * @param uniqueName
-	 * @return
+	 * @param parsedData
 	 */
-	@Deprecated
+	public static Map<String,Object> insertRunData(MongoClient mongoClient, String mongoDbName, String uniqueName,
+			Date startDate, Date endDate, String refId, int state, String comparableStr, String retEmptyRes){
+		return insertRunData(mongoClient, mongoDbName, uniqueName, startDate, endDate ,refId, state, comparableStr, retEmptyRes, null);
+	}
+	
+	/**
+	 * 插入数据,放回ObjectId  state: 0 运行状态  1 没获取到有效数据 2 获取到有效数据 
+	 * @param mongoClient
+	 * @param uniqueName
+	 * @param parsedData
+	 */
+	public static Map<String,Object> insertRunData(MongoClient mongoClient, String mongoDbName, String uniqueName,
+			Date startDate, Date endDate, String refId, int state, String comparableStr, String retEmptyRes, Map<String, ?> extKeys){
+		Document doc=new Document();
+		doc.append("uniqueName", uniqueName);
+		doc.append("startDate", new Date());
+		doc.append("endDate", new Date());
+		doc.append("refId", refId);
+		doc.append("state", state);
+		doc.append("comparableStr",comparableStr);
+		doc.append("retEmptyRes", retEmptyRes);
+	    if(extKeys!=null) {
+	    	//添加自定义列
+	    	for(String key:extKeys.keySet())
+	    		doc.append(key,extKeys.get(key));
+	    }
+		
+		MongoDatabase db=mongoClient.getDatabase(mongoDbName);
+		MongoCollection<Document> coll=db.getCollection("hq_run_data");
+		coll.insertOne(doc);
+		
+		return doc;
+	}
+	
+	/*
 	public static long queryComaprableStr(MongoClient mongoClient, String mongoDbName, String comparableStr, String uniqueName){
 		
 		Document cass=new Document();
@@ -54,35 +86,16 @@ public class PickLastoneRcdTool {
 		
 		return coll.count(cass);
 	}
-	
-	/**
-	 * 插入数据,放回ObjectId  state: 0 运行状态  1 没获取到有效数据 2 获取到有效数据 
-	 * @param mongoClient
-	 * @param uniqueName
-	 * @param parsedData
-	 */
-	public static Map<String,Object> insertRunData(MongoClient mongoClient, String mongoDbName, String uniqueName){
-		Document doc=new Document();
-		doc.append("uniqueName", uniqueName);
-		doc.append("state", 0);
-		doc.append("startDate", new Date());
-		
-		MongoDatabase db=mongoClient.getDatabase(mongoDbName);
-		MongoCollection<Document> coll=db.getCollection("hq_run_data");
-		coll.insertOne(doc);
-		
-		return doc;
+	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr, String refId){
+		updateRunData(mongoClient,mongoDbName,id, state, comparableStr, refId, null);
 	}
 	
-	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr){
-		updateRunData(mongoClient,mongoDbName,id, state, comparableStr,null);
-	}
-	
-	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr, Map<String, ?> extKeys){
+	public static void updateRunData(MongoClient mongoClient, String mongoDbName, String id, int state, String comparableStr, String refId, Map<String, ?> extKeys){
 		Document updatePartDoc=new Document();
 		updatePartDoc.append("state", state);
 		updatePartDoc.append("comparableStr",comparableStr);
 		updatePartDoc.append("endDate", new Date());
+		updatePartDoc.append("refRsId", refId);
 	    if(extKeys!=null) {
 	    	//添加自定义列
 	    	for(String key:extKeys.keySet())
@@ -95,5 +108,6 @@ public class PickLastoneRcdTool {
 		
 		updateResult.getModifiedCount();
 	}
+	*/
 	
 }
