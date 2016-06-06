@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class GilStockEntityDao {
 	
-	public Map<String,String> queryStkCodeEnMapper(JdbcTemplate gilJt) {
+	public static Map<String,String> queryStkCodeEnMapper(JdbcTemplate gilJt) {
 		Map<String,String> revMapper=new HashMap<String,String>();
 		
 		String sql="select SecuCode, EngName from secumain";
