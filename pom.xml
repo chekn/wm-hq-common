@@ -12,6 +12,11 @@
 			<version>3.2.15.RELEASE</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>3.2.15.RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>com.yicai.medialab</groupId>
 			<artifactId>hs-client</artifactId>
 			<version>0.0.1</version>
