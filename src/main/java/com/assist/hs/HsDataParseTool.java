@@ -1,6 +1,7 @@
 package com.assist.hs;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class HsDataParseTool {
 	 * @return
 	 */
 	public static Map<String, Map<String,Object>> parseHqOriData(Map<String, List<Object>> oriData){
-		Map<String, Map<String,Object>> rev=new HashMap<String, Map<String,Object>>();
+		Map<String, Map<String,Object>> rev=new LinkedHashMap<String, Map<String,Object>>();
 		
 		List<Object> fieldNames=oriData.get("fields");
 		int fieldCount=fieldNames.size();
