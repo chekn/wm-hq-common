@@ -17,8 +17,8 @@ public class HsDataParseTool {
 	 * @param oriData
 	 * @return
 	 */
-	public static Map<String, Map<String,Object>> parseHqOriData(Map<String, List<Object>> oriData){
-		Map<String, Map<String,Object>> rev=new LinkedHashMap<String, Map<String,Object>>();
+	public static LinkedHashMap<String, Map<String,Object>> parseHqOriData(Map<String, List<Object>> oriData){
+		LinkedHashMap<String, Map<String,Object>> rev=new LinkedHashMap<String, Map<String,Object>>();
 		
 		List<Object> fieldNames=oriData.get("fields");
 		int fieldCount=fieldNames.size();
