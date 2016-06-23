@@ -16,7 +16,7 @@ public class GilStockEntityDao {
 	public static Map<String,String> queryStkCodeEnMapper(JdbcTemplate gilJt) {
 		Map<String,String> revMapper=new HashMap<String,String>();
 		
-		String sql="select SecuCode, EngName from secumain";
+		String sql="select SecuCode, EngName from secumain where SecuCategory=1";
 		List<Map<String,Object>> stkMappers= gilJt.queryForList(sql);
 		for(Map<String,Object> stkMapper:stkMappers) {
 			revMapper.put((String)stkMapper.get("SecuCode"), (String)stkMapper.get("EngName"));
