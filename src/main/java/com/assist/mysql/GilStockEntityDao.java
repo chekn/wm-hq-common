@@ -21,7 +21,6 @@ public class GilStockEntityDao {
 		for(Map<String,Object> stkMapper:stkMappers) {
 			revMapper.put((String)stkMapper.get("SecuCode"), (String)stkMapper.get("EngName"));
 		}
-		
 		return revMapper;
 	}
 	

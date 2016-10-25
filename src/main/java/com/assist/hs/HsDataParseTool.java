@@ -24,7 +24,6 @@ public class HsDataParseTool {
 		int fieldCount=fieldNames.size();
 		for(String key:oriData.keySet()){
 			if(key.equals("fields")) continue;
-			
 			Map<String,Object> pVal=new HashMap<String,Object>();
 			List<Object> oVal=oriData.get(key);
 			for(int i=0; i<fieldCount; i++){
